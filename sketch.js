@@ -1,59 +1,71 @@
-var box,edges;
-var redsuf,bluesuf,greensuf,yellowsuf; 
-var music;
+var starImg, fairyImg, bgImg;
+var fairy , fairyVoice;
+var star, starBody;
 
-function preload(){
-    music = loadSound("music.mp3");
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+
+function preload()
+{
+	starImg = loadImage("images/star.png");
+	fairyImg = loadAnimation("images/fairyImage1.png","images/fairyImage2.png");
+	bgImg = loadImage("images/starNight.png");
+	fairyVoice = loadSound("sound/JoyMusic.mp3");
+
 }
 
-function setup(){
-    createCanvas(600,600);
+function setup() {
+	createCanvas(800, 750);
 
-    //create 4 different surfaces
-    redsuf=createSprite(70,580,120,20);
-    redsuf.shapeColor=color(255,0,0)
-    
-    bluesuf=createSprite(220,580,120,20);
-    bluesuf.shapeColor=color(0,0,255);
+ 	fairyVoice.play();
 
-    greensuf=createSprite(370,580,120,20);
-    greensuf.shapeColor=color(0,128,0);
+	fairy = createSprite(130, 520);
+	fairy.addAnimation("fairyflying",fairyImg);  
+	fairy.scale =0.25;
 
-    yellowsuf=createSprite(520,580,120,20);
-    yellowsuf.shapeColor=color(255,255,0)
-    //create box sprite and give velocity
+	star = createSprite(650,30);
+	star.addImage(starImg);
+	star.scale = 0.2;
 
-    box=createSprite(275,40,30,30);
-    box.shapeColor=color(255,255,255);
-    box.velocityY=6;
-    box.velocityX=3;
+	engine = Engine.create();
+	world = engine.world;
+
+	starBody = Bodies.circle(650 , 30 , 5 , {restitution:0.5, isStatic:true});
+	World.add(world, starBody);
+	
+	Engine.run(engine);
+
 }
+
 
 function draw() {
-    background(169,169,169);
-    edges=createEdgeSprites();
-    box.bounceOff(edges);
-    //add condition to check if box touching surface and make it box
-    
-    if(box.isTouching(yellowsuf)){
-    box.shapeColor=color(255,255,0);
-    box.bounceOff(yellowsuf)
-    }
+	background(bgImg);
 
-    if(box.isTouching(redsuf)){
-    box.shapeColor=color(255,0,0);
-    box.bounceOff(redsuf);
-    }
+	fairy.setCollider("rectangle",0,0,1000,100);
+	if(keyDown("space")){
+	star.velocityY=2;
+	}
 
-    if(box.isTouching(greensuf)){
-    box.shapeColor=color(0,128,0);
-    box.bounceOff(greensuf);
-    }
+	if(star.isTouching(fairy)){
+	star.velocityY=0;
+	sound.play()
+	}
 
-    if(box.isTouching(bluesuf)){
-    box.shapeColor=color(0,0,255);
-    box.bounceOff(bluesuf);
-    }
+  	drawSprites();
+	keyPressed();
+}
 
-    drawSprites();
+function keyPressed() {
+	//write code here
+	
+	if(keyDown("right")){
+	fairy.x=fairy.x+6;
+	}
+
+	if(keyDown("left")){
+	fairy.x=fairy.x-6;
+	}
+
 }
